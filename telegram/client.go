@@ -43,6 +43,7 @@ func (c Client) SendSticker(chatId int64, sticker string, replyToMessageId int64
 		`chat_id`:             chatId,
 		`sticker`:             sticker,
 		`reply_to_message_id`: replyToMessageId,
+		`protect_content`:     true,
 	})
 }
 
