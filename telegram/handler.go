@@ -20,6 +20,10 @@ func (h Handler) Start(ch chan types.Update) {
 func (h Handler) handle(data types.Update) {
 	slog.Info(`Handle update`, data)
 
+	if data.Message == nil {
+		return
+	}
+
 	switch {
 	case data.Message.NewChatMember != nil:
 		h.handleNewChatMember(data)
