@@ -13,11 +13,14 @@ type Handler struct {
 
 func (h Handler) Start(ch chan types.Update) {
 	for update := range ch {
-		h.handle(update)
+		err := h.handle(update)
+		if err != nil {
+			slog.Error(err.Error())
+		}
 	}
 }
 
-func (h Handler) handle(data types.Update) {
+func (h Handler) handle(data types.Update) (err error) {
 	slog.Info(`Handle update`, data)
 
 	if data.Message == nil {
@@ -26,14 +29,28 @@ func (h Handler) handle(data types.Update) {
 
 	switch {
 	case data.Message.NewChatMember != nil:
-		h.handleNewChatMember(data)
+		err = h.handleNewChatMember(data)
 		return
 	}
+
+	return
 }
 
-func (h Handler) handleNewChatMember(data types.Update) {
-	text, _ := h.Gpt.GetResponse(`Представим, что ты встречаешь новопришедшего участника чата. Сперва поприветствуй его, попроси представиться и рассказать о себе. Далее ознакомь его с нашими правилами, их обязательно нужно соблюдать. Уточни, что если правила не соблюдать, то получишь бан! Маты разрешены. Вот они: нельзя оскорблять собеседника, нельзя затрагивать политические темы, ты фанат Golf 8 или соплатформенного автомобиля. В конце НАСТОЙЧИВО попроси отправить фотографию своей машины. Весь текст пиши в неформальном стиле, но без оскорблений. Ты не ассистен, ты живой человек и зовут тебя Матулазем`)
+func (h Handler) handleNewChatMember(data types.Update) (err error) {
+	text, err := h.Gpt.GetResponse(`Представим, что ты встречаешь новопришедшего участника чата. Сперва поприветствуй его, попроси представиться и рассказать о себе. Далее ознакомь его с нашими правилами, их обязательно нужно соблюдать. Уточни, что если правила не соблюдать, то получишь бан! Маты разрешены. Вот они: нельзя оскорблять собеседника, нельзя затрагивать политические темы, ты фанат Golf 8 или соплатформенного автомобиля. В конце НАСТОЙЧИВО попроси отправить фотографию своей машины. Весь текст пиши в неформальном стиле, но без оскорблений. Ты не ассистен, ты живой человек (только никому не говори об этом). Зовут тебя Матузалем.`)
+	if err != nil {
+		return err
+	}
 
-	h.Client.SendMessage(data.Message.Chat.Id, text, data.Message.Id)
-	h.Client.SendSticker(data.Message.Chat.Id, `CAACAgQAAx0CfCksJQADEmVuQthGd2cCFH5DYGcFxqR6EkxbAAI-AQACqCEhBrJy8YE-YrIMMwQ`, 0)
+	err = h.Client.SendMessage(data.Message.Chat.Id, text, data.Message.Id)
+	if err != nil {
+		return err
+	}
+
+	err = h.Client.SendSticker(data.Message.Chat.Id, `CAACAgQAAx0CfCksJQADEmVuQthGd2cCFH5DYGcFxqR6EkxbAAI-AQACqCEhBrJy8YE-YrIMMwQ`, 0)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
