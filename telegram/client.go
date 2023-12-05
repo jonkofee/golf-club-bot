@@ -7,8 +7,10 @@ import (
 	"github.com/jonkofee/golf-club-bot/telegram/types"
 	"io"
 	"log"
+	"log/slog"
 	"maps"
 	"net/http"
+	"os"
 )
 
 const url = `https://api.telegram.org/bot%s/%s`
@@ -17,6 +19,15 @@ var lastReceivedUpdateId int64
 
 type Client struct {
 	Key string
+}
+
+func Create() *Client {
+	key := os.Getenv(`TELEGRAM_BOT_KEY`)
+	if len(key) == 0 {
+		slog.Error(`env TELEGRAM_BOT_KEY is not set`)
+	}
+
+	return &Client{Key: key}
 }
 
 func (c Client) SendMessage(chatId int64, text string, replyToMessageId int64) error {
