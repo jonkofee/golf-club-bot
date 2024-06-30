@@ -47,7 +47,12 @@ func (h Handler) handleNewChatMember(data types.Update) (err error) {
 		return err
 	}
 
-	err = h.Client.SendSticker(data.Message.Chat.Id, `CAACAgQAAx0CfCksJQADEmVuQthGd2cCFH5DYGcFxqR6EkxbAAI-AQACqCEhBrJy8YE-YrIMMwQ`, 0)
+	err = h.Client.SendVoice(data.Message.Chat.Id, `AwACAgIAAxkDAAMcZoEtY6rkU2AqCho1HSm4BWHSCH8AAgFLAALK9AlIK5iRMfGoXso1BA`)
+	if err != nil {
+		return err
+	}
+
+	err = h.Client.SendSticker(data.Message.Chat.Id, `CAACAgQAAx0CfCksJQADEmVuQthGd2cCFH5DYGcFxqR6EkxbAAI-AQACqCEhBrJy8YE-YrIMMwQ`)
 	if err != nil {
 		return err
 	}

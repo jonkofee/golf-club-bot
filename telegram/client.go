@@ -38,12 +38,19 @@ func (c Client) SendMessage(chatId int64, text string, replyToMessageId int64) e
 	})
 }
 
-func (c Client) SendSticker(chatId int64, sticker string, replyToMessageId int64) error {
+func (c Client) SendVoice(chatId int64, voice string) error {
+	return c.request(`SendVoice`, map[string]interface{}{
+		`chat_id`:         chatId,
+		`voice`:           voice,
+		`protect_content`: true,
+	})
+}
+
+func (c Client) SendSticker(chatId int64, sticker string) error {
 	return c.request(`sendSticker`, map[string]interface{}{
-		`chat_id`:             chatId,
-		`sticker`:             sticker,
-		`reply_to_message_id`: replyToMessageId,
-		`protect_content`:     true,
+		`chat_id`:         chatId,
+		`sticker`:         sticker,
+		`protect_content`: true,
 	})
 }
 
