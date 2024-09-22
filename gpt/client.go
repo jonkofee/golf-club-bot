@@ -36,7 +36,7 @@ func (c Client) GetResponse(request string) (response string, err error) {
 	}{}
 
 	bodyData := map[string]interface{}{
-		`model`: `gpt-3.5-turbo`,
+		`model`: `gpt-4o`,
 		`messages`: [1]map[string]string{{
 			`role`:    `user`,
 			`content`: request,
